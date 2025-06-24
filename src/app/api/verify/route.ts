@@ -1,7 +1,4 @@
-import { OpenAI } from "openai";
 import { NextRequest, NextResponse } from "next/server";
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req: NextRequest) {
   const { input } = await req.json();
@@ -23,12 +20,29 @@ Respond in JSON:
 ]
 `;
 
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4",
-    messages: [{ role: "user", content: prompt }],
-    temperature: 0.2,
+  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "llama3-70b-8192",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.2,
+    }),
   });
 
-  const responseText = completion.choices[0].message?.content || "";
-  return NextResponse.json(JSON.parse(responseText));
+  const data = await res.json();
+  const reply = data.choices?.[0]?.message?.content;
+
+  try {
+    const parsed = JSON.parse(reply || "[]");
+    return NextResponse.json(parsed);
+  } catch (err) {
+    return NextResponse.json(
+      { error: "Failed to parse model response", raw: reply },
+      { status: 500 }
+    );
+  }
 }
