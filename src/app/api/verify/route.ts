@@ -36,8 +36,11 @@ Respond in JSON:
   const data = await res.json();
   const reply = data.choices?.[0]?.message?.content;
 
+  // Try to extract JSON from within the full reply
+  const match = reply?.match(/\[\s*{[\s\S]*?}\s*]/); // Get the first [...] JSON block
+
   try {
-    const parsed = JSON.parse(reply || "[]");
+    const parsed = match ? JSON.parse(match[0]) : [];
     return NextResponse.json(parsed);
   } catch (err) {
     return NextResponse.json(
