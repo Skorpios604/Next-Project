@@ -37,13 +37,40 @@ export default function Home() {
       </button>
 
       {results && (
-        <div className="mt-6">
-          <h2 className="text-xl font-semibold">Results:</h2>
-          <pre className="whitespace-pre-wrap mt-2 bg-gray-100 text-black dark:bg-gray-900 dark:text-white p-4 rounded">
-            {JSON.stringify(results, null, 2)}
-          </pre>
+        <div className="mt-6 space-y-4">
+          <h2 className="text-xl font-semibold mb-2">Results:</h2>
+          {results.map((item: any, index: number) => (
+            <div
+              key={index}
+              className={`border-l-4 p-4 rounded shadow-md ${
+                item.status === "likely true"
+                  ? "border-green-600 bg-green-50"
+                  : item.status === "probably false"
+                  ? "border-red-600 bg-red-50"
+                  : "border-yellow-500 bg-yellow-50"
+              }`}
+            >
+              <p className="text-lg font-medium mb-1">🧠 Claim: {item.claim}</p>
+              <p className="font-semibold">
+                📊 Status:{" "}
+                <span
+                  className={`${
+                    item.status === "likely true"
+                      ? "text-green-700"
+                      : item.status === "probably false"
+                      ? "text-red-700"
+                      : "text-yellow-700"
+                  }`}
+                >
+                  {item.status}
+                </span>
+              </p>
+              <p className="mt-1 text-gray-700">📝 Notes: {item.notes}</p>
+            </div>
+          ))}
         </div>
       )}
+
     </main>
   );
 }
