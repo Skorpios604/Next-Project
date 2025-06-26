@@ -38,38 +38,29 @@ export default function Home() {
 
       {results && (
         <div className="mt-6 space-y-4">
-          <h2 className="text-xl font-semibold mb-2">Results:</h2>
-          {results.map((item: any, index: number) => (
-            <div
-              key={index}
-              className={`border-l-4 p-4 rounded shadow-md ${
-                item.status === "likely true"
-                  ? "border-green-600 bg-green-50"
-                  : item.status === "probably false"
-                  ? "border-red-600 bg-red-50"
-                  : "border-yellow-500 bg-yellow-50"
-              }`}
-            >
-              <p className="text-lg font-medium mb-1">🧠 Claim: {item.claim}</p>
-              <p className="font-semibold">
-                📊 Status:{" "}
-                <span
-                  className={`${
-                    item.status === "likely true"
-                      ? "text-green-700"
-                      : item.status === "probably false"
-                      ? "text-red-700"
-                      : "text-yellow-700"
-                  }`}
-                >
-                  {item.status}
-                </span>
-              </p>
-              <p className="mt-1 text-gray-700">📝 Notes: {item.notes}</p>
-            </div>
-          ))}
+          <h2 className="text-xl font-semibold mb-2 text-white">Results:</h2>
+          {results.map((item: any, index: number) => {
+            const baseClasses = "rounded-lg p-4 border shadow transition";
+            const themeClasses =
+              item.status === "likely true"
+                ? "bg-green-900/30 border-green-500 text-green-300"
+                : item.status === "probably false"
+                ? "bg-red-900/30 border-red-500 text-red-300"
+                : "bg-yellow-900/30 border-yellow-500 text-yellow-300";
+
+            return (
+              <div key={index} className={`${baseClasses} ${themeClasses}`}>
+                <p className="text-lg font-semibold">🧠 Claim: {item.claim}</p>
+                <p className="mt-1 font-medium">
+                  📊 Status: <span className="uppercase">{item.status}</span>
+                </p>
+                <p className="mt-1 text-sm text-white/80">📝 Notes: {item.notes}</p>
+              </div>
+            );
+          })}
         </div>
       )}
+
 
     </main>
   );
