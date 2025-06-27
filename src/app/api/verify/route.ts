@@ -4,20 +4,50 @@ export async function POST(req: NextRequest) {
   const { input } = await req.json();
 
   const prompt = `
-You are a hallucination detector. Given this AI-generated answer, break it into factual claims. For each claim, say if it's likely to be true or needs citation.
+You are an expert fact-checker. Your job is to analyze the following AI-generated text, break it down into individual factual claims, and assess the truthfulness of each claim.
 
-Text:
-"""${input}"""
+For each claim, provide:
+- "claim": The factual statement.
+- "status": One of the following:
+    - "likely true" (well-known, widely accepted, or easily verifiable)
+    - "needs verification" (plausible but not easily confirmed, or requires a reputable source)
+    - "probably false" (contradicts common knowledge or reliable sources)
+- "notes": A brief explanation for your assessment.
 
-Respond in JSON:
+Here are some examples:
 [
   {
-    "claim": "...",
-    "status": "likely true" | "needs verification" | "probably false",
-    "notes": "short explanation"
+    "claim": "The sky is blue.",
+    "status": "likely true",
+    "notes": "Common knowledge, easily observable."
   },
-  ...
+  {
+    "claim": "The Eiffel Tower is in Berlin.",
+    "status": "probably false",
+    "notes": "The Eiffel Tower is in Paris."
+  },
+  {
+    "claim": "Bananas contain potassium.",
+    "status": "likely true",
+    "notes": "Well-known nutritional fact."
+  },
+  {
+    "claim": "The average human can run 100 miles per hour.",
+    "status": "probably false",
+    "notes": "Far exceeds human capabilities."
+  },
+  {
+    "claim": "The capital of Australia is Sydney.",
+    "status": "probably false",
+    "notes": "The capital is Canberra."
+  }
 ]
+
+Now, analyze the following text:
+
+"""${input}"""
+
+Respond in the same JSON format as above.
 `;
 
   const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
